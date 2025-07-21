@@ -1,0 +1,40 @@
+# Data crawling
+name: DB_Making
+on: # 작업을 수행하는 조건
+#  schedule: # 스케쥴링
+  #  - cron: "*/5 * * * *" # 매 5분마다
+  workflow_dispatch: # 수동 실행 가능
+jobs: # 실행할 작업을 정의
+  db_making:
+    runs-on: ubuntu-latest # 우분투 최신 환경
+    permissions:
+      contents: write
+    steps:
+      - name: # 저장소 체크아웃
+        uses: actions/checkout@v3 # 현재 github 저장소를 가져온다
+        with: # 같이 진행할 작업
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: # Python 설정
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: # 크롤링 환경 설정
+        run: |
+          pip install selenium
+          pip install requests
+          pip install pandas
+          sudo apt-get update
+          sudo apt-get install chromium-browser -y
+          sudo apt-get install chromium-chromedriver -y
+      - name: #포켓몬 정보 가져오기
+        env:
+          DISPLAY: 99
+        run: python mada_c.py
+      - name: #변경 사항 커밋 및 푸시
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@github.com"
+          git add cook_recipe.csv
+          git add cook_ingredient.csv
+          git commit -m "Update weather data (auto)"
+          git push
