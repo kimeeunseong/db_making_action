@@ -26,7 +26,7 @@ jobs: # 실행할 작업을 정의
           sudo apt-get update
           sudo apt-get install chromium-browser -y
           sudo apt-get install chromium-chromedriver -y
-      - name: #포켓몬 정보 가져오기
+      - name: #csv 생성 시작
         env:
           DISPLAY: 99
         run: python mada_c.py
